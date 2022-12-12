@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +35,39 @@
   to {
     transform: rotate(360deg);
   }
+} */
+
+.paddle-left {
+  /* width: 20px; */
+  /* height: 100px; */
+  background: yellow;
+  /* border: 3px solid #333; */
+  position: fixed;
 }
+
+.paddle-right {
+  /* width: 20px; */
+  /* height: 100px; */
+  background: red;
+  /* border: 3px solid #333; */
+  position: fixed;
+}
+
+.ball {
+  position: fixed;
+}
+
+.goal {
+  position: fixed;
+}
+
+/* .court { */
+/* width: 100vw;
+  height: 50vh; */
+/* position: absolute; */
+/* left: 100px; */
+/* top: 200px; */
+/* right: 300px; */
+/* bottom: 400px; */
+/* background: orange; */
+/* } */
