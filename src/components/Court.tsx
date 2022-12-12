@@ -6,6 +6,7 @@ import { BALL_RADIUS } from './Ball'
 import Goal from './Goal';
 import Result from './Result';
 import { TIMEOUT } from 'dns';
+import { setInterval } from 'timers/promises';
 
 interface Props {
     pause: boolean;
@@ -27,7 +28,7 @@ const Court: React.FC<Props> = (props) => {
 
 
 
-    const GOAL_HEIGHT: number = 500
+    const GOAL_HEIGHT: number = 600;
     const GOAL_WIDTH: number = 2
 
     const GOAL_TOP: number = MIDDLE_Y + GOAL_HEIGHT / 2;
@@ -92,31 +93,16 @@ const Court: React.FC<Props> = (props) => {
         jy: JUMP,
     });
 
-    const ballOnPaddleheight = function (isLeft: boolean): boolean {
-        let top = isLeft ? leftPlayerTop : rightPlayerTop;
-        return ball.by >= top && ball.by <= top + PADDLE_HEIGHT;
-    };
-    const ballOnGoalheight = function (): boolean {
-        return ball.by >= GOAL_BOTTOM && ball.by <= GOAL_TOP;
-    };
-    let wait = function (ms: number): void {
+
+
+    const wait = function (ms: number): void {
         var start = new Date().getTime();
         var end = start;
         while (end < start + ms) {
             end = new Date().getTime();
         }
     };
-    const afterGoal = function (isLeft: boolean): void {
-        // let score: number = 1 + (isLeft ? scoreLeft : scoreRight);
-        isLeft ? setScoreLeft(scoreLeft + 1) : setScoreRight(scoreRight + 1);
-        console.log(`scoreLeft:${scoreLeft}`)
-        console.log(`scoreRight:${scoreRight}`)
-        let ball = randomBallPosition(START_BALL_MARGIN);
-        // wait(1000);
-        setLeftPlayerTop(MIDDLE_Y - PADDLE_HEIGHT / 2);
-        setRightPlayerTop(MIDDLE_Y - PADDLE_HEIGHT / 2);
-        setBall({ bx: ball.bx, by: ball.by });
-    };
+
 
     // useEffect(() => {
 
@@ -133,58 +119,76 @@ const Court: React.FC<Props> = (props) => {
     //     }
 
     // })
-    useEffect(() => {
-        if (!pause) {
+    const afterGoal = function (isLeft: boolean): void {
+        // let score: number = 1 + (isLeft ? scoreLeft : scoreRight);
+        // isLeft ? setScoreLeft(scoreLeft + 1) : setScoreRight(scoreRight + 1);
+        isLeft ? setScoreLeft((scoreLeft) => scoreLeft + 1) : setScoreRight((scoreRight) => scoreRight + 1)
+        console.log(`scoreLeft:${scoreLeft}`)
+        console.log(`scoreRight:${scoreRight}`)
+        wait(1000);
+        setLeftPlayerTop(MIDDLE_Y - PADDLE_HEIGHT / 2);
+        setRightPlayerTop(MIDDLE_Y - PADDLE_HEIGHT / 2);
+        let ball = randomBallPosition(START_BALL_MARGIN);
+        setBall({ bx: ball.bx, by: ball.by });
+    };
+    const ballOnGoalheight = function (): boolean {
+        return ball.by >= GOAL_BOTTOM && ball.by <= GOAL_TOP;
+    };
+    const ballOnPaddleheight = function (isLeft: boolean): boolean {
+        let top = isLeft ? leftPlayerTop : rightPlayerTop;
+        return ball.by >= top && ball.by <= top + PADDLE_HEIGHT;
+    };
 
-            setTimeout(() => {
-                if (ballOnGoalheight()) {
-                    if (ball.bx - JUMP < LEFT) {
-                        afterGoal(true);
-                        console.log("gol lewy")
-                    }
-                    else if (ball.bx + BALL_RADIUS + JUMP > RIGHT) {
-                        afterGoal(false);
-                        console.log("gol prawy")
+    const update = () => {
+        setBall({ bx: ball.bx + direction.jx, by: ball.by + direction.jy })
 
-                    }
-                }
-
-
-                setBall({ bx: ball.bx + direction.jx, by: ball.by + direction.jy })
-
-                if (ball.by - JUMP < TOP) {
-                    setDirection({ jx: 1 * direction.jx, jy: JUMP });
-                }
-                if (ball.by + BALL_RADIUS + JUMP > BOTTOM) {
-                    setDirection({ jx: 1 * direction.jx, jy: -1 * JUMP });
-                }
-                if (ball.bx - JUMP < LEFT || (ball.bx - JUMP - BALL_RADIUS < LEFT && ballOnPaddleheight(true))) {
-                    setDirection({ jx: 1 * JUMP, jy: 1 * direction.jy });
-                }
-                if (ball.bx + BALL_RADIUS + JUMP > RIGHT || (ball.bx + BALL_RADIUS + JUMP + BALL_RADIUS > RIGHT && ballOnPaddleheight(false))) {
-                    setDirection({ jx: -1 * JUMP, jy: 1 * direction.jy });
-                }
-
-
-            }, BALL_SPEED);
-            // return () => {
-
-            // }
+        if (ball.by - JUMP < TOP) {
+            setDirection({ jx: 1 * direction.jx, jy: JUMP });
         }
-    });
+        if (ball.by + BALL_RADIUS + JUMP > BOTTOM) {
+            setDirection({ jx: 1 * direction.jx, jy: -1 * JUMP });
+        }
+        if (ball.bx - JUMP < LEFT || (ball.bx - JUMP - BALL_RADIUS < LEFT && ballOnPaddleheight(true))) {
+            setDirection({ jx: 1 * JUMP, jy: 1 * direction.jy });
+        }
+        if (ball.bx + BALL_RADIUS + JUMP > RIGHT || (ball.bx + BALL_RADIUS + JUMP + BALL_RADIUS > RIGHT && ballOnPaddleheight(false))) {
+            setDirection({ jx: -1 * JUMP, jy: 1 * direction.jy });
+        }
+
+        if (ballOnGoalheight()) {
+            if (ball.bx - JUMP < LEFT) {
+                afterGoal(true);
+                console.log("gol lewy")
+            }
+            else if (ball.bx + BALL_RADIUS + JUMP > RIGHT) {
+                afterGoal(false);
+                console.log("gol prawy")
+            }
+        }
+    }
+
 
     // useEffect(() => {
-    //     if (ballOnGoalheight()) {
-    //         if (ball.bx - JUMP < LEFT) {
-    //             afterGoal(true);
+    //     const interval: any = setTimeout(() => {
+    //         if (!pause) {
+    //             update();
     //         }
-    //         else if (ball.bx + BALL_RADIUS + JUMP > RIGHT) {
-    //             afterGoal(false);
-    //         }
-    //     }
+    //     }, BALL_SPEED);
+    //     return () => clearTimeout(interval);
+    // });
+
+    useEffect(() => {
+        const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
+            if (!pause) {
+                update();
+            }
+        }, BALL_SPEED);
+        return () => clearTimeout(timeout);
+    });
 
 
-    // }, [screenLeft]);
+
+
 
 
     return (<>
