@@ -6,7 +6,7 @@ interface Props {
 const Result: React.FC<Props> = (props) => {
     const { leftPlayer, rightPlayer } = props;
     return (
-        <div>{leftPlayer}:{rightPlayer}</div>
+        <div className='result'>{leftPlayer}:{rightPlayer}</div>
     )
 }
 

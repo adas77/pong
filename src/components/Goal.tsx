@@ -8,7 +8,7 @@ interface Props {
 const Goal: React.FC<Props> = (props) => {
     const { top, left, w, h } = props;
     return (
-        <div className='goal' style={{ top: top, left: left, width: w, height: h, backgroundColor: "green" }}></div>
+        <div className='goal' style={{ top: top, left: left, width: w, height: h, backgroundColor: "white" }}></div>
     )
 }
 

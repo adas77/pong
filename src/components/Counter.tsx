@@ -14,16 +14,21 @@ const Counter: React.FC<Props> = (props) => {
 
     useEffect(() => {
         if (!pause) {
-            setTimeout(() => {
-                restart ? setTime(0) : setTime(time + 1);
+            const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
+                setTime(time + 1);
             }, 1);
+            return () => clearTimeout(timeout);
         }
     });
 
+    useEffect(() => {
+        setTime(0);
+    }, [restart]);
     return (<>
-        Time: {Math.floor(time / DAY)} d {Math.floor((time / HOUR) % 24)} h {Math.floor((time / MINUTE) % 60)} m {Math.floor((time / SECOND) % 60)} s
-    </>
-    )
+        <div className='clock'>
+            Time: {Math.floor(time / DAY)} d {Math.floor((time / HOUR) % 24)} h {Math.floor((time / MINUTE) % 60)} m {Math.floor((time / SECOND) % 60)} s
+        </div>
+    </>)
 }
 
 export default Counter
