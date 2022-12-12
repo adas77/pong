@@ -27,11 +27,7 @@ const GOAL_TOP: number = MIDDLE_Y + GOAL_HEIGHT / 2;
 const GOAL_BOTTOM: number = MIDDLE_Y - GOAL_HEIGHT / 2;
 
 const Court: React.FC<Props> = (props) => {
-    const FancyButton = React.forwardRef<HTMLButtonElement, React.HTMLProps<HTMLButtonElement>>((props, ref) => (
-        <button type="button" ref={ref} className="FancyButton">
-            {props.children}
-        </button>
-    ))
+    
     const { pause, restart } = props;
 
     const [leftPlayerTop, setLeftPlayerTop] = useState(MIDDLE_Y - PADDLE_HEIGHT / 2)
